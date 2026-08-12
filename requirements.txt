@@ -1,0 +1,33 @@
+# Environment: Kaggle GPU runtime (Python 3, CUDA 12.8)
+# Versions below are the exact ones used, from `pip freeze` on the Kaggle notebook.
+# Note: segmentation-models-pytorch is installed inline in the segmentation
+# notebook (!pip install segmentation-models-pytorch); keep that cell when running.
+
+# Core deep learning
+torch==2.10.0+cu128
+torchvision==0.25.0+cu128
+
+# Model architectures (Inception, ConvNeXt, DeiT, Swin, MiT-B2 backbones)
+timm==1.0.26
+
+# Segmentation (U-Net encoders: ResNet-34, MiT-B2/SegFormer)
+segmentation-models-pytorch==0.5.0
+
+# Explainability methods
+shap==0.51.0
+lime==0.2.0.1
+
+# Image processing, masking, perceptual hashing
+opencv-python==4.13.0.92
+scikit-image==0.25.2
+imagehash==4.3.2
+
+# Metrics, statistics (Wilcoxon signed-rank test), data handling
+scikit-learn==1.6.1
+scipy==1.16.3
+numpy==2.0.2
+pandas==2.3.3
+
+# Plotting
+matplotlib==3.10.0
+
