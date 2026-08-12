@@ -21,20 +21,59 @@ The main findings: gradient-based explanation methods are faithful on convolutio
 
 ## Repository structure
 
+Each stage is a folder of Jupyter notebooks, numbered in the order they were run.
+Gaps in the numbering reflect the working sequence and are intentional.
+
 ```
 .
 ├── README.md
 ├── requirements.txt
-├── 00_leakage_audit/01_build_clean_split       # Perceptual-hash duplicate audit and deduplicated group-aware split
-├── 02a_retrain_cnns/02b_retrain_transformers/03a_cnns_seeded/03b_swin_seeded/03b2_deit_seeded/04a_cnns_class_imbalance_handling/04b_swin_class_imbalance_handling/04b2_deit_class_imbalance_handling       # Five architectures, training, multi-seed protocol, imbalance ablation
-├── 06_build_xai_image_set/07a_xai_vanilla_cnn/07b_xai_inception/07c_xai_convnext/07d_xai_deit/07e_xai_swin/08_xai_iou/08b_xai_iou_significance_wilcoxon_agreement    # Grad-CAM, saliency, SHAP, LIME, attention rollout/windowed attention
-│                           # plus deletion/insertion faithfulness and IoU agreement metrics
-├── 09_build_masked_dataset/10a_masked_vanilla_cnn/10b_masked_inception/10c_masked_convnext/10d_masked_swin/10e_masked_deit/11_masked_vs_unmasked_metrics/13_masking_gradcam_figure             # Circular retinal masking experiment (radius-scaling, retraining)
-├── 15_idrid_preprocessing/16a_seg_unet_scratch_unmasked/16a_seg_unet_scratch_masked/16b_seg_unet_pretrained_unmasked/16b_seg_unet_pretrained_masked/16c_seg_segformer_unmasked/16c_seg_segformer_masked/17_segmentation_metrics       # IDRiD tiling, three U-Net encoders, Dice + weighted BCE, per-lesion metrics
-└── 08_xai_iou/08b_xai_iou_significance_wilcoxon_agreement             # Exploratory and analysis notebooks (incl. IoU / Wilcoxon agreement analysis)
+├── .gitignore
+│
+├── 01_leakage_audit/          # Perceptual-hash duplicate audit and deduplicated group-aware split
+│     00_leakage_audit
+│     01_build_clean_split
+│
+├── 02_classification/         # Five architectures, training, multi-seed protocol, imbalance ablation
+│     02a_retrain_cnns
+│     02b_retrain_transformers
+│     03a_cnns_seeded
+│     03b_swin_seeded
+│     03b2_deit_seeded
+│     04a_cnns_class_imbalance_handling
+│     04b_swin_class_imbalance_handling
+│     04b2_deit_class_imbalance_handling
+│
+├── 03_explainability/         # Grad-CAM, saliency, SHAP, LIME, attention (rollout / windowed)
+│     06_build_xai_image_set   # plus deletion/insertion faithfulness and IoU agreement metrics
+│     07a_xai_vanilla_cnn
+│     07b_xai_inception
+│     07c_xai_convnext
+│     07d_xai_deit
+│     07e_xai_swin
+│     08_xai_iou
+│     08b_xai_iou_significance_wilcoxon_agreement
+│
+├── 04_masking/                # Circular retinal masking experiment (radius-scaling, retraining)
+│     09_build_masked_dataset
+│     10a_masked_vanilla_cnn
+│     10b_masked_inception
+│     10c_masked_convnext
+│     10d_masked_swin
+│     10e_masked_deit
+│     11_masked_vs_unmasked_metrics
+│     13_masking_gradcam_figure
+│
+└── 05_segmentation/           # IDRiD tiling, three U-Net encoders, Dice + weighted BCE, per-lesion metrics
+      15_idrid_preprocessing
+      16a_seg_unet_scratch_unmasked
+      16a_seg_unet_scratch_masked
+      16b_seg_unet_pretrained_unmasked
+      16b_seg_unet_pretrained_masked
+      16c_seg_segformer_unmasked
+      16c_seg_segformer_masked
+      17_segmentation_metrics
 ```
-
-
 
 ---
 
@@ -67,19 +106,19 @@ Pinned package versions are listed in `requirements.txt`. A CUDA-capable GPU is 
 
 The pipeline follows the order of the numbered folders.
 
-1. **Leakage audit and split** (`00_leakage_audit/01_build_clean_split`)
+1. **Leakage audit and split** (`01_leakage_audit/`)
    Computes a perceptual hash per image, detects near-duplicate clusters with a Hamming-distance threshold of 2, groups them with union-find, and writes a deduplicated, group-aware, stratified 70/15/15 split. The saved split indices are reused unchanged by every downstream model.
 
-2. **Classification** (`02a_retrain_cnns/02b_retrain_transformers/03a_cnns_seeded/03b_swin_seeded/03b2_deit_seeded/04a_cnns_class_imbalance_handling/04b_swin_class_imbalance_handling/04b2_deit_class_imbalance_handling`)
+2. **Classification** (`02_classification/`)
    Trains the five retained architectures (custom CNN from scratch, Inception V3, ConvNeXt-Tiny, DeiT-Base, Swin-Base) on the deduplicated split. Convolutional models use five seeds, transformers three. Augmentation is applied to every run; class-imbalance handling is the single varied condition (weighted-loss ablation). Each run saves weights and test-set probabilities.
 
-3. **Explainability** (`06_build_xai_image_set/07a_xai_vanilla_cnn/07b_xai_inception/07c_xai_convnext/07d_xai_deit/07e_xai_swin/08_xai_iou/08b_xai_iou_significance_agreement`)
+3. **Explainability** (`03_explainability/`)
    Applies Grad-CAM, saliency, SHAP and LIME (plus attention rollout for DeiT and windowed attention for Swin) to a fixed 30-image set, six per grade, using each model's median-accuracy seed. Computes deletion/insertion faithfulness curves and top-k IoU agreement, including the paired Wilcoxon signed-rank test on LIME-vs-gradient agreement.
 
-4. **Masking** (`09_build_masked_dataset/10a_masked_vanilla_cnn/10b_masked_inception/10c_masked_convnext/10d_masked_swin/10e_masked_deit/11_masked_vs_unmasked_metrics/13_masking_gradcam_figure`)
+4. **Masking** (`04_masking/`)
    Locates the retinal disc, scales its radius by 0.9 to remove the outer boundary ring, retrains each architecture on the masked images with the matched seed, and regenerates the explanations for a before/after comparison.
 
-5. **Segmentation** (`15_idrid_preprocessing/16a_seg_unet_scratch_unmasked/16a_seg_unet_scratch_masked/16b_seg_unet_pretrained_unmasked/16b_seg_unet_pretrained_masked/16c_seg_segformer_unmasked/16c_seg_segformer_masked/17_segmentation_metrics`)
+5. **Segmentation** (`05_segmentation/`)
    Tiles IDRiD images into 512x512 patches at native resolution, trains three U-Net models (ResNet-34 from scratch, ResNet-34 pretrained, MiT-B2 / SegFormer) with a Dice + weighted-BCE loss, and evaluates Dice, IoU, sensitivity and precision per lesion type. Repeats under masking.
 
 ---
