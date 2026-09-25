@@ -21,15 +21,15 @@ Deep learning grades DR from fundus photographs with high accuracy, but accuracy
 - **A data-leakage audit changed the results.** Perceptual-hash deduplication found 187 near-duplicate clusters (~14% of the data); leaving them in inflates test accuracy by 5–30 points. Every model was trained on the deduplicated, group-aware split. <!-- ⚠ VERIFY: 187, 14%, "5–30 points" -->
 - **Preprocessing is not a substitute for pretraining.** A circular-masking experiment intended to move attention off the image boundary instead relocated it to the mask edge; pretraining, not preprocessing, is what draws a model toward retinal tissue.
 - **The architectural ordering holds under segmentation.** Repeating the comparison on pixel-level lesion segmentation (IDRiD) reproduced the same ordering, with the transformer-based model segmenting every structure at least as well as the pretrained network. <!-- ⚠ VERIFY: matches "at least as well as" phrasing in your write-up -->
-- ### Explanation agreement across architectures
+ ### Explanation agreement across architectures
 
-![Cross-method IoU agreement heatmaps for each architecture](images/agreement_heatmaps.png)
+![Cross-method IoU agreement heatmaps for each architecture](images/fig_iou_matrices.png)
 *Pairwise agreement between explanation methods, per architecture. Mutual agreement among the gradient methods (Grad-CAM, saliency, SHAP) is visible on the convolutional models but collapses on the transformers (DeiT-Base, Swin-Base).*
 
-![LIME agreement with gradient methods across architectures](images/lime_agreement.png)
+![LIME agreement with gradient methods across architectures](images/fig_iou_lime_across_models.png)
 *LIME's agreement with the gradient-based methods holds up more consistently across the CNN–transformer boundary than the gradient methods' agreement with each other.*
 
-![Per-method explanations across severity grades for ConvNeXt-Tiny](images/explainability_comparison.png)
+![Per-method explanations across severity grades for ConvNeXt-Tiny](images/xai_comparison_convnext_tiny.png)
 *The same correctly-classified images explained four ways (Grad-CAM, Saliency, SHAP, LIME). T: true grade, P: predicted grade. The methods highlight different regions of the same image — the disagreement the agreement metrics quantify.*
 
 ## Approach at a glance
