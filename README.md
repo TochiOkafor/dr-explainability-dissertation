@@ -21,7 +21,7 @@ Deep learning grades DR from fundus photographs with high accuracy, but accuracy
 - **A data-leakage audit changed the results.** Perceptual-hash deduplication found 187 near-duplicate clusters (~14% of the data); leaving them in inflates test accuracy by 5–30 points. Every model was trained on the deduplicated, group-aware split. <!-- ⚠ VERIFY: 187, 14%, "5–30 points" -->
 - **Preprocessing is not a substitute for pretraining.** A circular-masking experiment intended to move attention off the image boundary instead relocated it to the mask edge; pretraining, not preprocessing, is what draws a model toward retinal tissue.
 - **The architectural ordering holds under segmentation.** Repeating the comparison on pixel-level lesion segmentation (IDRiD) reproduced the same ordering, with the transformer-based model segmenting every structure at least as well as the pretrained network. <!-- ⚠ VERIFY: matches "at least as well as" phrasing in your write-up -->
- ### Explanation agreement across architectures
+### Explanation agreement across architectures
 
 ![Cross-method IoU agreement heatmaps for each architecture](images/fig_iou_matrices.png)
 *Pairwise agreement between explanation methods, per architecture. Mutual agreement among the gradient methods (Grad-CAM, saliency, SHAP) is visible on the convolutional models but collapses on the transformers (DeiT-Base, Swin-Base).*
