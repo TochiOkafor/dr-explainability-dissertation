@@ -85,8 +85,10 @@ Each run seeds the Python, NumPy and PyTorch generators and the data-loader gene
 
 ## Full write-up
 
-The complete methodology, results and discussion are in the dissertation:
-Okafor, T.E. (2026) *Secure and Explainable Deep Learning Models and Transformers for Healthcare Diagnostics: A Case Study on Diabetic Retinopathy.* MRes dissertation, University of Wolverhampton.
+The complete methodology, results and discussion are written up in my MRes dissertation:
+Okafor, T.E. (2026) *Secure and Explainable Deep Learning Models and Transformers for Healthcare Diagnostics: A Case Study on Diabetic Retinopathy.* MRes dissertation, University of Wolverhampton (awarded a distinction).
+
+A manuscript based on this work is in preparation for submission. The full dissertation is available on request.
 <!-- Add: link to the PDF, and to the published paper once it lands. -->
 
 ## Acknowledgements
